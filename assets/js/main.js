@@ -5,7 +5,7 @@ const nombreAnimal = document.getElementById('animal');
 const imgAnimal = document.getElementById('preview');
 const textarea = document.getElementById('comentarios');
 const edadSelect = document.getElementById('edad');
-const sonido =  document.createElement("audio");
+const sonido =  document.querySelector("#player");
 
 // Crea un objeto que mapee los nombres de las clases a sus constructores
 const animalConstructors = {
@@ -31,19 +31,21 @@ const animalConstructors = {
       });
 })();
   
-
-
-
-// Funcion para registrar los animales
-
+// Evento para registrar un nuevo animal
 document.getElementById('btnRegistrar').addEventListener('click', async () => {
+
+    if (nombreAnimal.value === '' || textarea.value === '' || edadSelect.value === '') {
+        alert('Por favor, complete los campos requeridos');
+        return;
+    }
 
     const resultados = await recibirDatos();
     const nombre = nombreAnimal.value;
     const edad = edadSelect.value;
     const comentarios = textarea.value;
     const img = imgAnimal.style.backgroundImage;
-   
+    //const urlSonido = sonido.src;
+    
 
     resultados.animales.forEach(animal => {
         if (animal.name === nombre) {
@@ -51,47 +53,92 @@ document.getElementById('btnRegistrar').addEventListener('click', async () => {
             // Usa el objeto animalConstructors para crear una nueva instancia de la clase correspondiente
             const AnimalConstructor = animalConstructors[animal.name];
 
+            
+
             if (AnimalConstructor) {
-                const animalInstance = new AnimalConstructor(nombre, edad, img, comentarios, sonido);
-                console.log(animalInstance);
+                // Crea una nueva instancia del sonido para cada animal para no sobreescribir el sonido de los animales anteriores
+                const sonidoAnimal = new Audio(sonido.src);
+                //console.log(sonidoAnimal);
+                const animalInstance = new AnimalConstructor(nombre, edad, img, comentarios, sonidoAnimal);
+                //console.log(animalInstance);
+                //Llama a la funcion construirTarjeta y le pasa la instancia del nuevo animal
                 construirTarjeta(animalInstance);
+                limpiarFormulario();
+                
             } else {
                 console.log('Constructor no encontrado para el animal:', animal.name);
             }
-        }
-
-        
+        }  
     });
-
-    
 });
     
 
 const construirTarjeta = (animalInstance) => {
-    console.log(animalInstance);
-
-    console.log(animalInstance.Nombre);
-    console.log(animalInstance.Edad);
-    console.log(animalInstance.Img);
-    console.log(animalInstance.Comentarios);
     
-    const play = document.querySelector('.playSound') //cambiar boton
+    const contenedor = document.getElementById('Animales');
+    const wrapper = document.createElement('div');
+    const divImg = document.createElement('div');
+    const btnPlay = document.createElement('button');
+    const icono = document.createElement('i');
+    const linkModal = document.createElement('a');
 
-    play.addEventListener('click', () => {
 
-    if (animalInstance instanceof Leon) {
-        animalInstance.Rugir();
-    } else if (animalInstance instanceof Lobo) {
-        animalInstance.Aullar();
-    } else if (animalInstance instanceof Oso) {
-        animalInstance.Gruñir();
-    } else if (animalInstance instanceof Serpiente) {
-        animalInstance.Sisear();
-    } else if (animalInstance instanceof Aguila) {
-        animalInstance.Chillar();
-    }
-    })
-    // Aquí puedes construir la tarjeta usando animalInstance
-    // Por ejemplo, creando un elemento div y agregándolo al DOM
+    icono.classList.add('fa-solid', 'fa-volume-high');
+    divImg.style.backgroundImage = animalInstance.Img;
+    divImg.classList.add('imagen');
+    wrapper.classList.add('wrapper' );
+    btnPlay.classList.add('btnPlay');
+    btnPlay.appendChild(icono);
+    linkModal.setAttribute('data-bs-toggle', 'modal');
+    linkModal.setAttribute('data-bs-target', '#exampleModal');
+    linkModal.setAttribute('type', 'button');
+    linkModal.appendChild(divImg);
+    wrapper.appendChild(linkModal);
+    wrapper.appendChild(btnPlay);
+    contenedor.appendChild(wrapper);
+    
+
+    generarModal(animalInstance);
+
+  
+    // Agrega un evento de clic a la imagen para abrir el modal
    
+
+    
+    btnPlay.addEventListener('click', () => {
+        
+        if (animalInstance instanceof Leon) {
+            animalInstance.Rugir();
+        } else if (animalInstance instanceof Lobo) {
+            animalInstance.Aullar();
+        } else if (animalInstance instanceof Oso) {
+            animalInstance.Gruñir();
+        } else if (animalInstance instanceof Serpiente) {
+            animalInstance.Sisear();
+        } else if (animalInstance instanceof Aguila) {
+            animalInstance.Chillar();
+        }
+    })
+   
+    
 };
+
+const limpiarFormulario = () => {
+    nombreAnimal.value = nombreAnimal.options[0].value;
+    imgAnimal.style.backgroundImage = '';
+    textarea.value = '';
+    edadSelect.value = edadSelect.options[0].value;
+}
+
+const generarModal = (animalInstance) => {
+    const titleModal = document.querySelector('.modal-title');
+    const imgModal = document.querySelector('.imgModal');
+    const edadModal = document.querySelector('.edadModal');
+    const comentariosModal = document.querySelector('.comentariosModal');
+
+    titleModal.textContent = animalInstance.Nombre;
+    imgModal.style.backgroundImage = animalInstance.Img;
+    edadModal.textContent = animalInstance.Edad;
+    comentariosModal.textContent = animalInstance.Comentarios;
+
+}

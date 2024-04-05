@@ -83,6 +83,7 @@ export class Aguila extends Animales{
     }
 
     Chillar(){
+        this._sonido.play();
         return this._sonido;
     }
 }
