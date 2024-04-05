@@ -7,7 +7,7 @@ const textarea = document.getElementById('comentarios');
 const edadSelect = document.getElementById('edad');
 const sonido =  document.querySelector("#player");
 
-// Crea un objeto que mapee los nombres de las clases a sus constructores
+// Objeto que mapee los nombres de las clases a sus constructores
 const animalConstructors = {
     Leon,
     Lobo,
@@ -30,6 +30,7 @@ const animalConstructors = {
 
       });
 })();
+
   
 // Evento para registrar un nuevo animal
 document.getElementById('btnRegistrar').addEventListener('click', async () => {
@@ -47,12 +48,12 @@ document.getElementById('btnRegistrar').addEventListener('click', async () => {
     const edad = edadSelect.value;
     const comentarios = textarea.value;
     const img = imgAnimal.style.backgroundImage;
-    //const urlSonido = sonido.src;
+    
     
 
     resultados.animales.forEach(animal => {
         if (animal.name === nombre) {
-            console.log("Animal encontrado:", animal.name);
+            //console.log("Animal encontrado:", animal.name);
             // Usa el objeto animalConstructors para crear una nueva instancia de la clase correspondiente
             const AnimalConstructor = animalConstructors[animal.name];
 
@@ -66,7 +67,10 @@ document.getElementById('btnRegistrar').addEventListener('click', async () => {
                 //console.log(animalInstance);
                 //Llama a la funcion construirTarjeta y le pasa la instancia del nuevo animal
                 construirTarjeta(animalInstance);
+                //Genera el modal con los datos del animal
+                generarModal(animalInstance);
                 limpiarFormulario();
+                
                 
             } else {
                 console.log('Constructor no encontrado para el animal:', animal.name);
@@ -75,9 +79,10 @@ document.getElementById('btnRegistrar').addEventListener('click', async () => {
     });
 });
     
-
+// Funcion para construir la tarjeta de cada animal
 const construirTarjeta = (animalInstance) => {
-    
+
+    //Crear elementos HTML para la tarjeta
     const contenedor = document.getElementById('Animales');
     const wrapper = document.createElement('div');
     const divImg = document.createElement('div');
@@ -101,8 +106,8 @@ const construirTarjeta = (animalInstance) => {
     contenedor.appendChild(wrapper);
     
 
-    generarModal(animalInstance);
     
+    // Evento para reproducir el sonido del animal dependiendo de su clase
     btnPlay.addEventListener('click', () => {
         
         if (animalInstance instanceof Leon) {
@@ -121,6 +126,8 @@ const construirTarjeta = (animalInstance) => {
     
 };
 
+
+// Funcion para limpiar el formulario
 const limpiarFormulario = () => {
     nombreAnimal.value = nombreAnimal.options[0].value;
     imgAnimal.style.backgroundImage = '';
@@ -128,6 +135,7 @@ const limpiarFormulario = () => {
     edadSelect.value = edadSelect.options[0].value;
 }
 
+// Funcion para generar el modal con los datos del animal
 const generarModal = (animalInstance) => {
     const titleModal = document.querySelector('.modal-title');
     const imgModal = document.querySelector('.imgModal');
