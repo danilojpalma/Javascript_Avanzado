@@ -34,7 +34,10 @@ const animalConstructors = {
 // Evento para registrar un nuevo animal
 document.getElementById('btnRegistrar').addEventListener('click', async () => {
 
-    if (nombreAnimal.value === '' || textarea.value === '' || edadSelect.value === '') {
+    let disabledOptionNombre = nombreAnimal.querySelector('option[disabled]').value;
+    let disabledOptionEdad = edadSelect.querySelector('option[disabled]').value;
+    
+    if (nombreAnimal.value === disabledOptionNombre || textarea.value === '' || edadSelect.value === disabledOptionEdad) {
         alert('Por favor, complete los campos requeridos');
         return;
     }
@@ -99,11 +102,6 @@ const construirTarjeta = (animalInstance) => {
     
 
     generarModal(animalInstance);
-
-  
-    // Agrega un evento de clic a la imagen para abrir el modal
-   
-
     
     btnPlay.addEventListener('click', () => {
         
